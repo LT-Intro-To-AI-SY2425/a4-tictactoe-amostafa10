@@ -1,6 +1,6 @@
 # NOTE: Until you fill in the TTTBoard class mypy is going to give you multiple errors
 # talking about unimplemented class attributes, don't worry about this as you're working
-
+import math
 
 class TTTBoard:
     """A tic tac toe board
@@ -10,7 +10,50 @@ class TTTBoard:
             represent moves by player 'O' and '*'s are spots no one has yet played on
     """
 
-    pass
+    def __init__(self) -> None:
+        self.board = ["*", "*", "*",
+                      "*", "*", "*",
+                      "*", "*", "*"]
+
+    def __str__(self) -> str:
+        return ''
+    
+    def make_move(self, player, position):
+        if self.board[position] == "*":
+            self.board[position] = player
+            return True
+        return False
+
+    def has_won(self, player):
+        print("------")
+        for index, item in enumerate(self.board):
+            if item == "*":
+                continue
+
+            ixpos, iypos = index % 3, math.floor(index / 3)
+            print(ixpos, iypos, item)
+            for xdir in range(-1, 1):
+                for ydir in range(-1, 1):
+                    if xdir == 0 and ydir == 0:
+                        continue
+
+                    nxpos, nypos = ixpos + xdir, iypos + ydir
+                    print("   ", nxpos, nypos)
+                    if 0 <= nxpos <= 2 and 0 <= nypos <= 2:
+                        nindex = nypos * 3 + nxpos
+                        if self.board[nindex] == player:
+                            nxpos += xdir
+                            nypos += ydir
+                            nindex = nypos * 3 + nxpos
+                            if 0 <= nxpos <= 2 and 0 <= nypos <= 2 and self.board[nindex] == player:
+                                print("true")
+                                return True
+        print("false")
+        return False
+
+    def game_over(self):
+        print(self.has_won("X"), self.has_won("O"), all(item != "*" for item in self.board))
+        return self.has_won("X") or self.has_won("O") or all(item != "*" for item in self.board)
 
 
 def play_tic_tac_toe() -> None:
