@@ -11,48 +11,67 @@ class TTTBoard:
     """
 
     def __init__(self) -> None:
-        self.board = ["*", "*", "*",
-                      "*", "*", "*",
-                      "*", "*", "*"]
+        self.board = ["*"] * 9
 
     def __str__(self) -> str:
-        return ''
+        output = ''
+        for index, value in enumerate(self.board):
+            output += f'{value} '
+            if (index + 1) % 3 == 0:
+                output += '\n'
+        return output
     
     def make_move(self, player, position):
-        if self.board[position] == "*":
-            self.board[position] = player
-            return True
-        return False
+        if position < 0 or position > 8 or self.board[position] != "*":
+            return False
+
+        self.board[position] = player
+        return True
 
     def has_won(self, player):
-        print("------")
-        for index, item in enumerate(self.board):
-            if item == "*":
-                continue
+        # print("------")
+        # for index, item in enumerate(self.board):
+        #     if item == "*":
+        #         continue
 
-            ixpos, iypos = index % 3, math.floor(index / 3)
-            print(ixpos, iypos, item)
-            for xdir in range(-1, 1):
-                for ydir in range(-1, 1):
-                    if xdir == 0 and ydir == 0:
-                        continue
+        #     ixpos, iypos = index % 3, math.floor(index / 3)
+        #     print(ixpos, iypos, item)
+        #     for xdir in range(-1, 1):
+        #         for ydir in range(-1, 1):
+        #             if xdir == 0 and ydir == 0:
+        #                 continue
 
-                    nxpos, nypos = ixpos + xdir, iypos + ydir
-                    print("   ", nxpos, nypos)
-                    if 0 <= nxpos <= 2 and 0 <= nypos <= 2:
-                        nindex = nypos * 3 + nxpos
-                        if self.board[nindex] == player:
-                            nxpos += xdir
-                            nypos += ydir
-                            nindex = nypos * 3 + nxpos
-                            if 0 <= nxpos <= 2 and 0 <= nypos <= 2 and self.board[nindex] == player:
-                                print("true")
-                                return True
-        print("false")
+        #             nxpos, nypos = ixpos + xdir, iypos + ydir
+        #             print("   ", nxpos, nypos)
+        #             if 0 <= nxpos <= 2 and 0 <= nypos <= 2:
+        #                 nindex = nypos * 3 + nxpos
+        #                 if self.board[nindex] == player:
+        #                     nxpos += xdir
+        #                     nypos += ydir
+        #                     nindex = nypos * 3 + nxpos
+        #                     if 0 <= nxpos <= 2 and 0 <= nypos <= 2 and self.board[nindex] == player:
+        #                         print("true")
+        #                         return True
+        # print("false")
+        # return False
+        winning_condition = [player] * 3
+
+        # check horizontal
+        if self.board[:3] == winning_condition or self.board[3:6] == winning_condition or self.board[6:] == winning_condition:
+            return True
+        # check vertical
+        if self.board[::3] == winning_condition or self.board[1::3] == winning_condition or self.board[2::3] == winning_condition:
+            return True
+        # check diagonal
+        if self.board[::4] == winning_condition or self.board[2:7:2] == winning_condition:
+            return True
+        
         return False
+    
+    def clear(self):
+        self.board = ["*"] * 9
 
     def game_over(self):
-        print(self.has_won("X"), self.has_won("O"), all(item != "*" for item in self.board))
         return self.has_won("X") or self.has_won("O") or all(item != "*" for item in self.board)
 
 
@@ -79,7 +98,7 @@ def play_tic_tac_toe() -> None:
     turn = 0
 
     while not brd.game_over():
-        print(brd)
+        print(brd, turn)
         move: str = input(f"Player {players[turn]} what is your move? ")
 
         if not is_int(move):
@@ -106,6 +125,7 @@ if __name__ == "__main__":
     brd = TTTBoard()
     brd.make_move("X", 8)
     brd.make_move("O", 7)
+    brd.make_move("O", 8)
 
     assert brd.game_over() == False
 
@@ -132,4 +152,4 @@ if __name__ == "__main__":
     print("All tests passed!")
 
     # uncomment to play!
-    # play_tic_tac_toe()
+    play_tic_tac_toe()
